@@ -1,0 +1,4 @@
+1. in terminal => npm install prompt-sync
+2. change player balance or other settings in blackJack.mjs
+3. run blackJack.mjs
+4. enjoy
