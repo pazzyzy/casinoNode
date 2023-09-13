@@ -60,12 +60,12 @@ function placingBet() {
   console.log('\n*\n')
   console.log('playerBalance = ', playerBalance)
   separation()
-  bidSize = readFromTerminal('place your bet => ')
-  if (bidSize > playerBalance) {
-    console.log(`[ error, bid less than ${playerBalance} ]`)
-    placingBet()
-  } else {
+  bidSize = Number(readFromTerminal('place your bet => '))
+  if (bidSize > 0 && bidSize <= playerBalance) {
     playerBalance -= bidSize
+  } else {
+    console.log(`[ error, bid from 0 to ${playerBalance} ]`)
+    placingBet()
   }
 }
 
@@ -117,6 +117,7 @@ function dealerTurn() {
     dealerPoints -= 10
     dealerAces -= 1
     console.log('\nchange A = 11 to A = 1\n')
+    printCardAndScore()
     dealerTurn()
   }
 }
@@ -131,7 +132,7 @@ function checkScore() {
   if (dealerPoints === playerPoints) {
     console.log('push\nyou have an equal number of points')
     separation()
-    playerBalance += bidSize
+    playerBalance = playerBalance + bidSize
     return
   }
   if (dealerPoints < playerPoints) {
