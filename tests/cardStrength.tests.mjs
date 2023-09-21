@@ -1,6 +1,6 @@
 import cardStrength from '../blackJackNode/cardStrength.mjs'
 
-if (cardStrength({ suit: '♥️', value: 3 }) != '3') {
+if (cardStrength({ suit: '♥️', value: 3 }) != 3) {
   throw new Error('Функия cardStrength работает неверно!')
 }
 
