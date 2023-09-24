@@ -2,9 +2,11 @@ import readFromTerminal from './readFromTerminal.mjs'
 import shuffle from './deckForPlaying.mjs'
 import deck from './deck.mjs'
 import cardStrength from './cardStrength.mjs'
+import { singUpIn } from './singUpIn.mjs'
+import connectAndReadFromDb from '../postgresNode/index.mjs'
 
 //setings
-let playerBalance = 1000 // счет игрока
+let playerBalance // счет игрока
 let blackJacksPoint = 21 // игра до
 
 const numberOfDecks = 6 //количество колод в игре
@@ -20,13 +22,32 @@ let dealerCardArr = []
 let playerCardArr = []
 let state = 'placingBet'
 let needACard = 'y'
+let infoAboutUsers = await connectAndReadFromDb() //Чтение из БД
+let userId
+// let playerBalanceFromBd = 0
 
 shuffleDeck = shuffle(shuffleDeck, numberOfDecks, deck)
 separation()
+
+separation()
+
 console.log('\nwelcome to the blackjack game\n         start game')
+//login or reg
+separation()
+userId = singUpIn(infoAboutUsers)
+console.log('infoAboutUsers = ', infoAboutUsers)
+if (userId) {
+  console.log('userId = ', userId)
+  playerBalance = infoAboutUsers[userId - 1].balance
+  console.log('playerBalance = ', playerBalance)
+} else {
+  console.log('net takogo!@#')
+}
+console.log('userId = ', userId)
 
 //start game
-while (playerBalance > 0) {
+while (userId && playerBalance > 0) {
+  // начинаем игру только если есть баланс и авторизация
   mainLoop(state)
 }
 separation()
