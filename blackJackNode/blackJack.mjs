@@ -24,7 +24,6 @@ let state = 'placingBet'
 let needACard = 'y'
 let infoAboutUsers = await connectAndReadFromDb() //Чтение из БД
 let userId
-// let playerBalanceFromBd = 0
 
 shuffleDeck = shuffle(shuffleDeck, numberOfDecks, deck)
 separation()
