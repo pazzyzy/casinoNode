@@ -3,7 +3,8 @@ import shuffle from './deckForPlaying.mjs'
 import deck from './deck.mjs'
 import cardStrength from './cardStrength.mjs'
 import { singUpIn } from './singUpIn.mjs'
-import connectAndReadFromDb from '../postgresNode/index.mjs'
+// import { connectAndReadFromDb, addInfoToDB } from '../postgresNode/index.mjs'
+import { readFromDb } from '../postgresNode/index.mjs'
 
 //setings
 let playerBalance // счет игрока
@@ -22,28 +23,25 @@ let dealerCardArr = []
 let playerCardArr = []
 let state = 'placingBet'
 let needACard = 'y'
-let infoAboutUsers = await connectAndReadFromDb() //Чтение из БД
+let infoAboutUsers = await readFromDb() //Чтение из БД
 let userId
 
 shuffleDeck = shuffle(shuffleDeck, numberOfDecks, deck)
 separation()
-
-separation()
-
-console.log('\nwelcome to the blackjack game\n         start game')
-//login or reg
-separation()
-userId = singUpIn(infoAboutUsers)
 console.log('infoAboutUsers = ', infoAboutUsers)
+separation()
+console.log('\nwelcome to the blackjack game\n         start game')
+separation()
+//login or reg
+userId = singUpIn(infoAboutUsers)
 if (userId) {
+  // Проверяем есть ли такой юзер в БД
   console.log('userId = ', userId)
   playerBalance = infoAboutUsers[userId - 1].balance
   console.log('playerBalance = ', playerBalance)
 } else {
-  console.log('net takogo!@#')
+  console.log('user not found')
 }
-console.log('userId = ', userId)
-
 //start game
 while (userId && playerBalance > 0) {
   // начинаем игру только если есть баланс и авторизация

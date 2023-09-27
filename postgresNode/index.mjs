@@ -1,45 +1,71 @@
-import { PGUSER, PGHOST, PGPASSWORD, PGDATABASE, PGPORT } from './InfoBd.mjs'
+import path from 'path'
+import dotenv from 'dotenv'
+import { fileURLToPath } from 'url'
+import pg from 'pg'
+import { info } from 'console'
+const { Pool } = pg
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+dotenv.config({
+  override: true,
+  path: path.join(__dirname, 'development.env'),
+})
 
-import pkg from 'pg'
-const { Client } = pkg
+const pool = new Pool({
+  user: process.env.USER,
+  host: process.env.HOST,
+  database: process.env.DATABASE,
+  password: process.env.PASSWORD,
+  port: process.env.PORT,
+})
 
-const connectAndReadFromDb = async () => {
+const id = 4
+const login = 4
+const password = 4
+const balance = 4
+
+const readFromDb = async () => {
   try {
-    const client = new Client({
-      user: PGUSER,
-      host: PGHOST,
-      database: PGDATABASE,
-      password: PGPASSWORD,
-      port: PGPORT,
-    })
-    await client.connect()
-    const res = await client.query(`SELECT * FROM users`)
-    // console.log(res.rows[0].email)
-    // console.log(res.rows)
-    await client.end()
-    return res.rows //возвращаем массив объектов {id, login, password, balance}
-  } catch (error) {
-    console.log(error)
+    const { rows } = await pool.query('SELECT * from users')
+    return rows
+  } catch (err) {
+    console.log(err)
   }
 }
 
-export default connectAndReadFromDb
+// function readFromDb() {
+//   let infoAboutUsers
+//   ;(async () => {
+//     // const client = await pool.connect()
+//     try {
+//       const { rows } = await pool.query('SELECT * from users')
 
-// const addInfo = async () => {
-//   try {
-//     const client = new Client({
-//       user: PGUSER,
-//       host: PGHOST,
-//       database: PGDATABASE,
-//       password: PGPASSWORD,
-//       port: PGPORT,
-//     })
-//     await client.connect()
-//     const res = await client.query(
-//       `INSERT INTO users (id, login, password) VALUES (2, 3, 4)`
-//     )
-//     await client.end()
-//   } catch (error) {
-//     console.log(error)
-//   }
+//       infoAboutUsers = rows
+
+//       // console.log('rows.length = ', rows.length)
+//       // console.log('rows = ', rows)
+//     } catch (err) {
+//       console.log(err)
+//     } //finally {
+//     //   client.release()
+//     // }
+//     console.log('infoAboutUsers = ', infoAboutUsers)
+//     return infoAboutUsers
+//   })()
 // }
+
+function writeToDb() {
+  ;(async () => {
+    try {
+      const { rows } = await pool.query('SELECT * from users')
+
+      await pool.query(
+        `INSERT INTO users (id, login, password, balance) VALUES(4, 4, 4, 4)`
+      )
+    } catch (err) {
+      console.log(err)
+    }
+  })()
+}
+
+export { readFromDb, writeToDb }
