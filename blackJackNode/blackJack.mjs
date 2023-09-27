@@ -3,16 +3,14 @@ import shuffle from './deckForPlaying.mjs'
 import deck from './deck.mjs'
 import cardStrength from './cardStrength.mjs'
 import { singUpIn } from './singUpIn.mjs'
-// import { connectAndReadFromDb, addInfoToDB } from '../postgresNode/index.mjs'
-import { readFromDb } from '../postgresNode/index.mjs'
+import { readFromDb, writeToDb } from '../postgresNode/index.mjs'
 
 //setings
-let playerBalance // счет игрока
-let blackJacksPoint = 21 // игра до
-
+const blackJacksPoint = 21 // игра до
 const numberOfDecks = 6 //количество колод в игре
 const dealerPlayToThisPoint = blackJacksPoint - 4
-let shuffleDeck = [...deck]
+let playerBalance // счет игрока
+// let shuffleDeck = [...deck]
 let numerOfMove = 0
 let playerPoints = 0
 let dealerPoints = 0
@@ -24,34 +22,35 @@ let playerCardArr = []
 let state = 'placingBet'
 let needACard = 'y'
 let infoAboutUsers = await readFromDb() //Чтение из БД
-let userId
-
-shuffleDeck = shuffle(shuffleDeck, numberOfDecks, deck)
-separation()
-console.log('infoAboutUsers = ', infoAboutUsers)
-separation()
+let shuffleDeck = shuffle([...deck], numberOfDecks, deck) //перетусовка колоды
+// greetings
+console.log('all users in db = ', infoAboutUsers) //вывод на экран пользователей из БД
 console.log('\nwelcome to the blackjack game\n         start game')
 separation()
-//login or reg
-userId = singUpIn(infoAboutUsers)
-if (userId) {
-  // Проверяем есть ли такой юзер в БД
-  console.log('userId = ', userId)
-  playerBalance = infoAboutUsers[userId - 1].balance
+// user selection
+let userInfo = await singUpIn(infoAboutUsers) //login or registration
+if (userInfo) {
+  // let updateInfoAboutUsers = await readFromDb()
+  console.log('userInfo = ', userInfo)
+  playerBalance = userInfo.balance
   console.log('playerBalance = ', playerBalance)
 } else {
   console.log('user not found')
 }
-//start game
-while (userId && playerBalance > 0) {
-  // начинаем игру только если есть баланс и авторизация
-  mainLoop(state)
-}
-separation()
-console.log('your balance is EMPTY')
-separation()
 
-//function
+//start game
+gameBlackJack()
+
+// function
+function gameBlackJack() {
+  while (userInfo && playerBalance > 0) {
+    mainLoop(state)
+  }
+  separation()
+  console.log('your balance is EMPTY')
+  separation()
+}
+
 function mainLoop(state) {
   switch (state) {
     case 'placingBet':
@@ -71,7 +70,7 @@ function mainLoop(state) {
     case 'checkScore':
       checkScore()
   }
-  finishAndExit()
+  return finishAndExit()
 }
 
 function placingBet() {
@@ -171,6 +170,7 @@ function finishAndExit() {
   const wantToPlay = readFromTerminal(
     'write [ y ] if you want to play more or [ n ] if you want to stop => '
   )
+  let finishPlayerBalance
   switch (wantToPlay) {
     case 'y':
       break
@@ -179,6 +179,7 @@ function finishAndExit() {
       console.log(
         `Congratulations, you took from the balance = ${playerBalance}`
       )
+      finishPlayerBalance = playerBalance
       playerBalance = 0
       break
     default:
@@ -186,10 +187,13 @@ function finishAndExit() {
       finishAndExit()
   }
   returnToDefault()
+  return finishPlayerBalance
 }
 
 function separation() {
-  console.log('_\n')
+  console.log(
+    '__________________________________________________________________________\n'
+  )
 }
 
 function getOneCard(deck) {

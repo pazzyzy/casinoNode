@@ -1,7 +1,7 @@
 import readFromTerminal from './readFromTerminal.mjs'
 import { writeToDb } from '../postgresNode/index.mjs'
 
-function singUpIn(infoAboutUsers) {
+async function singUpIn(infoAboutUsers) {
   const registrationOrLogin = readFromTerminal(
     'Write to login [ log ]     /     to create new account write [ new ] => '
   )
@@ -10,9 +10,7 @@ function singUpIn(infoAboutUsers) {
     case 'log':
       return login(infoAboutUsers)
     case 'new':
-      console.log('new acc')
-      registration(infoAboutUsers)
-      break
+      return registration(infoAboutUsers)
     default:
       console.log('error. write [ log ] or [ new ] ')
       singUpIn(infoAboutUsers)
@@ -22,52 +20,35 @@ function singUpIn(infoAboutUsers) {
 }
 
 function login(infoAboutUsers) {
-  let userId
-  const userLogin = readFromTerminal('Enter login => ')
-  const userPassword = readFromTerminal('Enter password => ')
+  let user
+  const login = readFromTerminal('Enter login => ')
+  const password = readFromTerminal('Enter password => ')
   infoAboutUsers.forEach((element) => {
-    if (element.login === userLogin && element.password === userPassword) {
-      console.log('element.id = userId = ', element.id)
+    if (element.login === login && element.password === password) {
+      console.log('user = ', element)
       console.log('баланс = ', element.balance)
-      userId = element.id
+      user = element
       return
     }
   })
-  return userId
+  return user
 }
 
 function registration(infoAboutUsers) {
-  const userLogin = readFromTerminal('Enter new login => ')
-  const userPassword = readFromTerminal('Enter new password => ')
-  const userBalance = readFromTerminal('Enter your deposit => ')
-  let userIsNew = true
+  const login = readFromTerminal('Enter new login => ')
+  const password = readFromTerminal('Enter new password => ')
+  const balance = readFromTerminal('Enter your deposit => ')
   infoAboutUsers.forEach((element) => {
-    if (element.login === userLogin) {
-      console.log('A user with the same name already exists')
-      userIsNew = false
-      singUpIn(infoAboutUsers)
+    if (element.login === login) {
+      console.log(
+        'A user with the same name already exists. Try with a new new login\n'
+      )
+      registration(infoAboutUsers)
     }
   })
-  if (userIsNew) {
-    const userId = infoAboutUsers.lenght
-    writeToDb() //(userId, userLogin, userPassword, userBalance)
-  }
-  // addInfoToDB(in)
+  const id = infoAboutUsers.length + 1
+  writeToDb(id, login, password, balance)
+  return { id, login, password, balance }
 }
-
-// function registration(infoAboutUsers) {
-//   const userLogin = readFromTerminal('Enter new login => ')
-//   const userPassword = readFromTerminal('Enter new password => ')
-//   const userBalance = readFromTerminal('Enter your deposit => ')
-//   infoAboutUsers.forEach((element) => {
-//     if (element.login === userLogin) {
-//       console.log('A user with the same name already exists')
-//       return
-//     }
-//     const userId = infoAboutUsers.lenght
-//     addInfoToDB(userId, userLogin, userPassword, userBalance)
-//     // addInfoToDB(in)
-//   })
-// }
 
 export { singUpIn }
