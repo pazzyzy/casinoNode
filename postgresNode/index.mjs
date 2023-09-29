@@ -5,6 +5,8 @@ import pg from 'pg'
 const { Pool } = pg
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
+const tableName = process.env.tableName
+
 dotenv.config({
   override: true,
   path: path.join(__dirname, 'development.env'),
@@ -37,4 +39,14 @@ const writeToDb = async (id, login, password, balance) => {
   }
 }
 
-export { readFromDb, writeToDb }
+const updateUserBalance = async (balance, login) => {
+  try {
+    await pool.query(
+      `UPDATE users SET balance = ${balance} WHERE login = '${login}'`
+    )
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+export { readFromDb, writeToDb, updateUserBalance }

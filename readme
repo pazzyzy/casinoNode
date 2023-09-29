@@ -1,4 +1,6 @@
-1. in terminal => npm install prompt-sync
-2. change player balance or other settings in blackJack.mjs
-3. run code in terminal => blackJack.mjs
-4. enjoy
+1. In terminal => npm install prompt-sync (для запуска приложения в терминале)
+~~2. change player balance or other settings in blackJack.mjs~~
+2. All info about users and balance save in PostgreSQL
+3. PosrgreSQL setting in file development.env
+3. Run code in terminal => blackJack.mjs
+4. Enjoy

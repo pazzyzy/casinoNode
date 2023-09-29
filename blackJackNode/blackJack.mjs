@@ -3,14 +3,17 @@ import shuffle from './deckForPlaying.mjs'
 import deck from './deck.mjs'
 import cardStrength from './cardStrength.mjs'
 import { singUpIn } from './singUpIn.mjs'
-import { readFromDb, writeToDb } from '../postgresNode/index.mjs'
+import {
+  readFromDb,
+  updateUserBalance,
+  writeToDb,
+} from '../postgresNode/index.mjs'
 
 //setings
 const blackJacksPoint = 21 // игра до
 const numberOfDecks = 6 //количество колод в игре
 const dealerPlayToThisPoint = blackJacksPoint - 4
 let playerBalance // счет игрока
-// let shuffleDeck = [...deck]
 let numerOfMove = 0
 let playerPoints = 0
 let dealerPoints = 0
@@ -30,10 +33,8 @@ separation()
 // user selection
 let userInfo = await singUpIn(infoAboutUsers) //login or registration
 if (userInfo) {
-  // let updateInfoAboutUsers = await readFromDb()
-  console.log('userInfo = ', userInfo)
   playerBalance = userInfo.balance
-  console.log('playerBalance = ', playerBalance)
+  // console.log('playerBalance = ', playerBalance)
 } else {
   console.log('user not found')
 }
@@ -43,11 +44,11 @@ gameBlackJack()
 
 // function
 function gameBlackJack() {
-  while (userInfo && playerBalance > 0) {
-    mainLoop(state)
+  while (playerBalance > 0) {
+    const balanceToSave = mainLoop(state)
   }
   separation()
-  console.log('your balance is EMPTY')
+  console.log('your game balance is EMPTY')
   separation()
 }
 
@@ -92,7 +93,6 @@ function dealingStartingCard() {
   getCardToPlayer(shuffleDeck)
   separation()
   printCardAndScore()
-
   //Проверка не словил ли игрок БД с раздачи
   if (
     (dealerPoints != 10 || dealerPoints != 11) &&
@@ -170,24 +170,24 @@ function finishAndExit() {
   const wantToPlay = readFromTerminal(
     'write [ y ] if you want to play more or [ n ] if you want to stop => '
   )
-  let finishPlayerBalance
   switch (wantToPlay) {
     case 'y':
-      break
+      returnToDefault()
+      if (playerBalance === 0) {
+        updateUserBalance(0, userInfo.login)
+      }
+      return
     case 'n':
       separation()
-      console.log(
-        `Congratulations, you took from the balance = ${playerBalance}`
-      )
-      finishPlayerBalance = playerBalance
+      console.log(`Congratulations, on your balance = ${playerBalance}`)
+      updateUserBalance(playerBalance, userInfo.login)
       playerBalance = 0
-      break
+      returnToDefault()
+      return
     default:
       console.log('Error')
       finishAndExit()
   }
-  returnToDefault()
-  return finishPlayerBalance
 }
 
 function separation() {

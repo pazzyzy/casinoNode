@@ -5,7 +5,6 @@ async function singUpIn(infoAboutUsers) {
   const registrationOrLogin = readFromTerminal(
     'Write to login [ log ]     /     to create new account write [ new ] => '
   )
-
   switch (registrationOrLogin) {
     case 'log':
       return login(infoAboutUsers)
@@ -16,7 +15,6 @@ async function singUpIn(infoAboutUsers) {
       singUpIn(infoAboutUsers)
       break
   }
-  console.log('doshlo do konca')
 }
 
 function login(infoAboutUsers) {
@@ -25,8 +23,6 @@ function login(infoAboutUsers) {
   const password = readFromTerminal('Enter password => ')
   infoAboutUsers.forEach((element) => {
     if (element.login === login && element.password === password) {
-      console.log('user = ', element)
-      console.log('баланс = ', element.balance)
       user = element
       return
     }
