@@ -1,5 +1,8 @@
-1. In terminal => npm install prompt-sync. 
+1. In terminal => npm install prompt-sync.
 2. All info about users save in PostgreSQL.
 3. PosrgreSQL setting in file development.env.
 4. Run code in terminal => blackJack.mjs.
 5. Enjoy.
+
+   ![Alt text](/casinoNode/blob/main/screenshots/loginScreenshot.jpg?raw=true 'loginScreenshot')
+   ![Alt text](/casinoNode/blob/main/screenshots/regScreenshot.jpg?raw=true 'registrationScreenshot')
