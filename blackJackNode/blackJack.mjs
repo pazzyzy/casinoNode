@@ -25,7 +25,7 @@ let playerCardArr = []
 let state = 'placingBet'
 let needACard = 'y'
 let infoAboutUsers = await readFromDb() //Чтение из БД
-let shuffleDeck = shuffle([...deck], numberOfDecks, deck) //перетусовка колоды
+let shuffleDeck = shuffle([...deck], numberOfDecks, deck) // тусовка колоды
 // greetings
 console.log('all users in db = ', infoAboutUsers) //вывод на экран пользователей из БД
 console.log('\nwelcome to the blackjack game\n         start game')
@@ -34,18 +34,15 @@ separation()
 let userInfo = await singUpIn(infoAboutUsers) //login or registration
 if (userInfo) {
   playerBalance = userInfo.balance
-  // console.log('playerBalance = ', playerBalance)
+  gameBlackJack() //start game
 } else {
   console.log('user not found')
 }
 
-//start game
-gameBlackJack()
-
 // function
 function gameBlackJack() {
   while (playerBalance > 0) {
-    const balanceToSave = mainLoop(state)
+    mainLoop(state)
   }
   separation()
   console.log('your game balance is EMPTY')

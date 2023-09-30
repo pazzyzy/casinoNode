@@ -32,7 +32,7 @@ const readFromDb = async () => {
 const writeToDb = async (id, login, password, balance) => {
   try {
     await pool.query(
-      `INSERT INTO users (id, login, password, balance) VALUES(${id}, ${login}, ${password}, ${balance})`
+      `INSERT INTO users (id, login, password, balance) VALUES(${id}, '${login}', '${password}', ${balance})`
     )
   } catch (err) {
     console.log(err)

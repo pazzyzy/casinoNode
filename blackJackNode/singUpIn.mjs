@@ -2,18 +2,17 @@ import readFromTerminal from './readFromTerminal.mjs'
 import { writeToDb } from '../postgresNode/index.mjs'
 
 async function singUpIn(infoAboutUsers) {
-  const registrationOrLogin = readFromTerminal(
-    'Write to login [ log ]     /     to create new account write [ new ] => '
+  let registrationOrLogin = readFromTerminal(
+    'Write to login [ log ]     /     for registration write [ reg ] => '
   )
   switch (registrationOrLogin) {
     case 'log':
       return login(infoAboutUsers)
-    case 'new':
+    case 'reg':
       return registration(infoAboutUsers)
     default:
-      console.log('error. write [ log ] or [ new ] ')
-      singUpIn(infoAboutUsers)
-      break
+      console.log('error. write [ log ] or [ reg ] ')
+      return singUpIn(infoAboutUsers)
   }
 }
 
@@ -30,7 +29,7 @@ function login(infoAboutUsers) {
   return user
 }
 
-function registration(infoAboutUsers) {
+async function registration(infoAboutUsers) {
   const login = readFromTerminal('Enter new login => ')
   const password = readFromTerminal('Enter new password => ')
   const balance = readFromTerminal('Enter your deposit => ')
@@ -43,7 +42,7 @@ function registration(infoAboutUsers) {
     }
   })
   const id = infoAboutUsers.length + 1
-  writeToDb(id, login, password, balance)
+  await writeToDb(id, login, password, balance)
   return { id, login, password, balance }
 }
 
